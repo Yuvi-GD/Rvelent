@@ -1,0 +1,96 @@
+#include <iostream>
+#include <SDL3/SDL.h>
+#include "imgui.h"
+#include "backends/imgui_impl_sdl3.h"
+#include "backends/imgui_impl_sdlrenderer3.h"
+
+int main() {
+    // 1. Setup SDL
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) return -1;
+
+    // Create Window with "High DPI" support and "Resizable"
+    SDL_Window* window = SDL_CreateWindow("Rvelent Engine (Project Chassis)", 1280, 720, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL); // Simple 2D Renderer for UI
+
+    // 2. Setup Dear ImGui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // <--- ENABLE DOCKING (The Magic)
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport (Drag windows outside main app)
+
+    // Setup Style (Dark Mode)
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
+    ImGui_ImplSDLRenderer3_Init(renderer);
+
+    bool isRunning = true;
+    SDL_Event event;
+
+    // 3. Main Loop
+    while (isRunning) {
+        while (SDL_PollEvent(&event)) {
+            ImGui_ImplSDL3_ProcessEvent(&event); // Send events to ImGui
+            if (event.type == SDL_EVENT_QUIT) isRunning = false;
+            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(window)) isRunning = false;
+        }
+
+        // Start Frame
+        ImGui_ImplSDLRenderer3_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
+        ImGui::NewFrame();
+
+        // --- DOCKSPACE CODE START ---
+        // This creates a fullscreen "Dockspace" that covers the whole window
+        ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
+        
+        // --- YOUR EDITOR PANELS ---
+        
+        // 1. Left Panel: Viewport
+        ImGui::Begin("Viewport");
+        ImGui::Text("Game View Will Go Here");
+        ImGui::End();
+
+        // 2. Right Panel: Outliner
+        ImGui::Begin("Outliner");
+        ImGui::Text("Actor 1");
+        ImGui::Text("Actor 2");
+        ImGui::End();
+
+        // 3. Right Bottom Panel: Details
+        ImGui::Begin("Details");
+        ImGui::Text("Transform: 0,0,0");
+        ImGui::SameLine();
+        ImGui::Button("Edit Transform");
+        ImGui::End();
+
+        // 4. Bottom Panel: Content Browser / Logs
+        ImGui::Begin("Content Browser");
+        ImGui::Text("Folder: /Assets");
+        ImGui::End();
+
+        ImGui::Begin("Output Log");
+        ImGui::Text("Log: Engine Started...");
+        ImGui::End();
+
+        // --- RENDER ---
+        ImGui::Render();
+        SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255); // Gray background
+        SDL_RenderClear(renderer);
+        ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
+        SDL_RenderPresent(renderer);
+    }
+
+    // Cleanup
+    ImGui_ImplSDLRenderer3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
+    ImGui::DestroyContext();
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
+}

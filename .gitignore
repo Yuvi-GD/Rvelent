@@ -1,0 +1,74 @@
+# ====================================================================
+# Rvelent Engine - Standard Git Ignore
+# ====================================================================
+
+# --- Compilation & Build Artifacts ---
+build/
+Bin/
+out/
+x64/
+x86/
+Debug/
+Release/
+
+# --- Compiled Shaders (Wicked Engine Runtime Generation) ---
+# The root shaders/ directory contains compiled binary (.cso/.wishadermeta) shaders.
+# These are generated at runtime and should NEVER be committed to Git.
+/shaders/
+
+# --- Standard Compiler & Linker Outputs ---
+*.exe
+*.dll
+*.so
+*.dylib
+*.lib
+*.a
+*.obj
+*.o
+*.pdb
+*.ilk
+*.exp
+*.map
+*.cso
+*.cst
+*.rsp
+
+# --- CMake Generated Files (In case of in-source builds) ---
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# --- IDEs and Editor Configurations ---
+# Ignore local workspace configurations completely (different for every dev)
+.vs/
+.vscode/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.suo
+*.user
+*.ncb
+*.opensdf
+*.sdf
+*.cache
+*.VC.db
+*.VC.opendb
+
+# --- Engine Runtime Outputs & Local Cache ---
+imgui.ini
+log.txt
+*.log
+
+# --- OS-specific Temporary Files ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
